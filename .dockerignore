@@ -1,0 +1,11 @@
+.venv
+__pycache__
+*.pyc
+.git
+.DS_Store
+sentra_raw.db
+live_data.db
+models/*.keras
+models/*.pkl
+node_modules
+.next

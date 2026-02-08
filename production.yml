@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # 1. Infrastructure (Memory)
+  neo4j:
+    image: neo4j:latest
+    container_name: sentra-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/password
+    networks:
+      - sentra_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: sentra-chroma
+    ports:
+      - "8000:8000"
+    networks:
+      - sentra_net
+
+  # 2. Simulation - Victim
+  vulnerable_cam:
+    build: 
+      context: docker/vulnerable_cam
+      dockerfile: Dockerfile
+    container_name: sentra-cam
+    networks:
+      - sentra_net
+    # Expose ports for attacker access within the mesh
+    # Host mapping removed because sidecar accesses it locally
+
+  # 3. The Sentra Core (Sidecar Defense)
+  # It shares the network stack with the camera to "see" the attack.
+  sentra_core:
+    build: 
+      context: .
+      dockerfile: docker/sentra_core/Dockerfile
+    container_name: sentra-core
+    network_mode: service:vulnerable_cam
+    environment:
+      - SENTRA_MODE=INFERENCE 
+      - SENTRA_INTERFACE=eth0  # In sidecar, likely eth0 of the container
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=password
+      - CHROMA_HOST=chromadb
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      - SENTRA_TRAIN_DURATION=60
+    depends_on:
+      - neo4j
+      - chromadb
+      - vulnerable_cam
+    volumes:
+      - ./models:/app/models # Persistence
+
+  # 4. Attacker
+  attacker:
+    build: 
+      context: docker/attacker
+      dockerfile: Dockerfile
+    container_name: sentra-attacker
+    networks:
+      - sentra_net
+    depends_on:
+      - vulnerable_cam
+    environment:
+      - TARGET_HOST=vulnerable_cam # Access by name
+      - TARGET_PORT=554
+
+  # 5. Cowrie Honeypot (Deception Layer)
+  cowrie:
+    image: cowrie/cowrie:latest
+    container_name: sentra-cowrie
+    networks:
+      - sentra_net
+    ports:
+      - "2222:2222"  # SSH Honeypot
+      - "2223:2223"  # Telnet Honeypot
+    environment:
+      - COWRIE_OUTPUT_JSONLOG=true
+    volumes:
+      - ./honeypot_logs:/cowrie/var/log/cowrie
+
+  # 6. Ollama LLM Server (Local Inference)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: sentra-ollama
+    networks:
+      - sentra_net
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # Pull gemma3:1b model on first run
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull gemma3:270m && wait"]
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+networks:
+  sentra_net:
+    driver: bridge
+
+volumes:
+  ollama_data:

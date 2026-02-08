@@ -1,0 +1,40 @@
+# Core Networking & Data
+scapy
+numpy
+pandas
+netifaces
+python-nmap
+networkx
+python-louvain
+
+# Machine Learning & Analysis
+scikit-learn
+tensorflow-cpu
+# pysom -- specialized library, might need check, using sklearn-som or similar if available, or custom implementation
+sklearn-som
+susie # for SOM if needed, or we implement custom. Let's stick to standard libs or custom implementation for now.
+joblib
+
+# Agent & Memory
+langgraph
+langchain
+langchain-community
+neo4j
+chromadb
+openai # standard interface, even for local LLMs often
+ollama # specific client if using Ollama
+
+# Web & API
+fastapi
+uvicorn[standard]
+python-multipart
+websockets
+
+# Deception / Docker Control
+docker
+
+# Utilities
+pydantic
+pydantic-settings
+python-dotenv
+loguru

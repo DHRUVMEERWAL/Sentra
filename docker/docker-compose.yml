@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  neo4j:
+    image: neo4j:latest
+    container_name: sentra-neo4j
+    ports:
+      - "7474:7474" # HTTP
+      - "7687:7687" # Bolt
+    environment:
+      - NEO4J_AUTH=neo4j/sentra_password
+      - NEO4J_PLUGINS=["apoc", "graph-data-science"]
+    volumes:
+      - ./data/neo4j:/data
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: sentra-chroma
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data/chroma:/chroma/chroma
+
+  # Placeholder for Cowrie (later)
+  # cowrie: ...

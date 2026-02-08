@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  vulnerable_cam:
+    build: ./vulnerable_cam
+    container_name: sim_cam
+    ports:
+      - "8081:80"   # Mapped to host 8081
+      - "5554:554"  # Mapped to host 5554
+    networks:
+      - sim_net
+
+  attacker:
+    build: ./attacker
+    container_name: sim_attacker
+    networks:
+      - sim_net
+    depends_on:
+      - vulnerable_cam
+
+networks:
+  sim_net:
+    driver: bridge
