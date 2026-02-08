@@ -1,13 +1,8 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # 🛡️ SENTRA
 
 ### Autonomous IoT Defense System with Agentic AI
-
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Docker](https://img.shields.io/badge/docker-compose-2496ED.svg)](https://www.docker.com/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![LLM](https://img.shields.io/badge/LLM-Gemma3:270m-orange.svg)](https://ollama.ai/)
 
 **Real-time threat detection, autonomous response, and active deception for IoT networks**
 
@@ -37,7 +32,6 @@
 - **Real-time Inference**: Sub-second detection on live network traffic
 
 ### 🤖 Agentic AI Pipeline
-- **LangGraph Workflow**: ANALYZE → DECIDE → DEPLOY → MONITOR
 - **Local LLM**: Gemma3:270m via Ollama for privacy-preserving inference
 - **Contextual Analysis**: LLM receives device history and attack patterns
 - **Autonomous Decision Making**: Agent decides response actions independently
@@ -132,7 +126,7 @@
 ### 1. Clone & Setup
 
 ```bash
-git clone https://github.com/yourusername/sentra.git
+git clone https://github.com/dhruvmeerwal/sentra.git
 cd sentra/v1
 
 # Create virtual environment
@@ -249,10 +243,7 @@ sentra/v1/
 ├── scripts/                    # Utility scripts
 │   ├── evaluate_model.py      # Model evaluation
 │   └── init_neo4j.py          # Schema initialization
-├── web/                        # Web components
-│   ├── api/                   # FastAPI backend
-│   │   └── main.py           # API endpoints
-│   └── dashboard/             # Next.js frontend
+├── sentra-dashboard-app/      # Web components
 ├── production.yml              # Docker Compose config
 └── requirements.txt            # Python dependencies
 ```
@@ -354,26 +345,8 @@ python -m core.main
 
 ---
 
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **E-Raksha Hackathon** - For the opportunity to build this
-- **Ollama** - Local LLM inference
-- **LangGraph** - Agent orchestration framework
-- **Cowrie** - Honeypot implementation
-
----
-
 <div align="center">
 
-**Built with 🛡️ for the E-Raksha Hackathon**
-
-[Report Bug](https://github.com/yourusername/sentra/issues) • [Request Feature](https://github.com/yourusername/sentra/issues)
+[Report Bug](https://github.com/DHRUVMEERWAL/Sentra/issues) • [Request Feature](https://github.com/DHRUVMEERWAL/Sentra/issues)
 
 </div>
-]]>
